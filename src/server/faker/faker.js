@@ -1,38 +1,47 @@
 var faker = require("faker");
+var fs = require('fs');
 
-var fs = require('fs');  // file system
+for (var i = 1; i <= 3; i++){
 
-for (var i = 1; i <= 10; i++){
-
-  var file = fs.createWriteStream(`./data${i}.csv`);
-  writeData(0, 1000000);
+  // var file = fs.createWriteStream(`./data${i}.csv`);
+  writeData(1, 20);
   
   function writeData(bound1, bound2){
-  //import fs
-  var header = 'videoID|publishedAt|title|description|duration|views|thumbnails|videoUrl\n';
-  file.write(header);
+    var header = 'videoID|publishedAt|title|description|duration|views|thumbnails|videoUrl\n';
+    // file.write(header);
+    // fs.writeFileSync(`./data${i}.csv`, header);
+    
+    var data = header;
 
-  for (var i = bound1; i < bound2; i++){
-    var videoID = i.toString();
-    var publishedAt = "2018-01-29T22:39:08+00:00"
-    var title = faker.lorem.sentence();
-    var description = faker.lorem.sentence();
-    var duration = faker.random.number(10000000);
-    var views = faker.random.number(10000000);
-    var thumbnails = {};
-    var videoUrl = `https://www.youtube.com/watch?v=${videoID}`;
-    var csvString = `${videoID}|${publishedAt}|${title}|${description}|${duration}|${views}|`
-    var csvString2 = thumbnails;
-    var csvString3 = `|${videoUrl}\n`;
-    file.write(csvString);
-    file.write(JSON.stringify(csvString2));
-    file.write(csvString3);
+    for (var j = bound1; j <= bound2; j++){
+      if (j % 1000000 === 0) { console.log('j: ', j) }
+      var videoID = i.toString();
+      var publishedAt = "2018-01-29T22:39:08+00:00"
+      var title = faker.lorem.sentence();
+      var description = faker.lorem.sentence();
+      var duration = faker.random.number(10000000);
+      var views = faker.random.number(10000000);
+      var thumbnails = {};
+      var videoUrl = `https://www.youtube.com/watch?v=${videoID}`;
+      var csvString = `${videoID}|${publishedAt}|${title}|${description}|${duration}|${views}|${thumbnails}|${videoUrl}\n`;
+      // file.write(csvString);
+      // file.write(JSON.stringify(csvString2));
+      // file.write(csvString3);
+      data += csvString;
+    }
+    fs.writeFileSync(`./data${i}.csv`, data);
+
+    // file.end(function(){console.log('done')});
   }
+};
 
-  file.end(function(){console.log('done')});
 
-  }
-}
+
+
+
+
+
+
 
 // file.write(videoID);
 // file.write('|');
