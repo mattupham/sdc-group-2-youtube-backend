@@ -1,51 +1,45 @@
 exports.seed = (knex, Promise) => {
-  return knex('videos').del()
+  return knex('video_info').del()
   .then(() => {
-    return knex('videos').insert({
-      videoID: 'OPxeCiy0RdX',
-      publishedAt: '2016-02-09T00:05:00.000Z',
+    return knex('video_info').insert({
+      video_id: 1,
+      published_at: '2016-02-09T00:05:00.000Z',
       title: 'AngularJS Tutorial',
       description: 'Get the Code Here',
       duration: 1233,
       views: 1231232,
-      thumbnails: JSON.stringify({
-        default: {},
-        medium: {},
-        high: {},
-      }),
-      videoUrl: "https://i.ytimg.com/vi/OPxeCiy0RdY/hqdefault.jpg"
+      video_url: 'https://www.youtube.com/watch?v=1',
+      thumbnail_1: 'https://i.ytimg.com/vi/1/default1.jpg',
+      thumbnail_2: 'https://i.ytimg.com/vi/1/default2.jpg',
+      thumbnail_3: 'https://i.ytimg.com/vi/1/default3.jpg'
     });
   })
   .then(() => {
-    return knex('videos').insert({
-      videoID: 'OPxeCiy0RdY',
-      publishedAt: '2016-02-09T00:05:00.000Z',
+    return knex('video_info').insert({
+      video_id: 2,
+      published_at: '2016-02-09T00:05:00.000Z',
       title: 'AngularJS Tutorial',
       description: 'Get the Code Here',
       duration: 1233,
       views: 1231232,
-      thumbnails: JSON.stringify({
-        default: {},
-        medium: {},
-        high: {},
-      }),
-      videoUrl: "https://i.ytimg.com/vi/OPxeCiy0RdY/hqdefault.jpg"
+      video_url: 'https://www.youtube.com/watch?v=2',
+      thumbnail_1: 'https://i.ytimg.com/vi/2/default1.jpg',
+      thumbnail_2: 'https://i.ytimg.com/vi/2/default2.jpg',
+      thumbnail_3: 'https://i.ytimg.com/vi/2/default3.jpg'
     });
   })
   .then(() => {
-    return knex('videos').insert({
-      videoID: 'OPxeCiy0RdZs11hrs',
-      publishedAt: '2016-02-09T00:05:00.000Z',
-      title: '11 hour AngularJS Tutorial',
+    return knex('video_info').insert({
+      video_id: 3,
+      published_at: '2016-02-09T00:05:00.000Z',
+      title: 'AngularJS Tutorial',
       description: 'Get the Code Here',
       duration: 39600000,
-      views: 922337203685477999,
-      thumbnails: JSON.stringify({
-        default: {},
-        medium: {},
-        high: {},
-      }),
-      videoUrl: "https://i.ytimg.com/vi/OPxeCiy0RdY/hqdefault.jpg"
+      views: 922337203685478000,
+      video_url: 'https://www.youtube.com/watch?v=3',
+      thumbnail_1: 'https://i.ytimg.com/vi/3/default1.jpg',
+      thumbnail_2: 'https://i.ytimg.com/vi/3/default2.jpg',
+      thumbnail_3: 'https://i.ytimg.com/vi/3/default3.jpg'
     });
   })
 };

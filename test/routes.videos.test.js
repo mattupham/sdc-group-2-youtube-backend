@@ -25,18 +25,16 @@ describe('routes : videos', () => {
       chai.request(server)
       .post('/videos/client/upload')
       .send({
-          videoID: 'OPxeCiy0RdA',
-          publishedAt: '2016-02-09T00:05:00.000Z',
-          title: 'AngularJS Tutorial 4',
-          description: 'Get the Code Here',
-          duration: 1233,
-          views: 1231232,
-          thumbnails: JSON.stringify({
-            default: {},
-            medium: {},
-            high: {},
-          }),
-          videoUrl: "https://i.ytimg.com/vi/OPxeCiy0RdY/hqdefault.jpg"
+        video_id: 4,
+        published_at: '2016-02-09T00:05:00.000Z',
+        title: 'AngularJS Tutorial',
+        description: 'Get the Code Here',
+        duration: 1233,
+        views: 1231232,
+        video_url: 'https://www.youtube.com/watch?v=4',
+        thumbnail_1: 'https://i.ytimg.com/vi/4/default1.jpg',
+        thumbnail_2: 'https://i.ytimg.com/vi/4/default2.jpg',
+        thumbnail_3: 'https://i.ytimg.com/vi/4/default3.jpg'
       })
       .end((err, res) => {
         // there should be no errors
@@ -52,7 +50,7 @@ describe('routes : videos', () => {
         // the JSON response body should have a
         // key-value pair of {"data": 1 video object}
         res.body.data[0].should.include.keys(
-          'videoID', 'publishedAt', 'title', 'description', 'duration', 'views', 'thumbnails', 'videoUrl'
+          'video_id', 'published_at', 'title', 'description', 'duration', 'views', 'video_url', 'thumbnail_1', 'thumbnail_2', 'thumbnail_3'
         );
         done();
       });
@@ -80,15 +78,18 @@ describe('routes : videos', () => {
     });
   });
 
-  describe('[CLIENT] DELETE videos/client/delete/:videoID [Client]', () => {
-    it('should return the video that was deleted [Client]', (done) => {
-      knex('videos')
+  
+
+  
+  describe('[CLIENT] DELETE videos/client/delete/:video_id', () => {
+    it('should return the video that was deleted', (done) => {
+      knex('video_info')
       .select('*')
       .then((videos) => {
         const videoObject = videos[0];
         const lengthBeforeDelete = videos.length;
         chai.request(server)
-        .delete(`/videos/client/delete/${videoObject.videoID}`)
+        .delete(`/videos/client/delete/${videoObject.video_id}`)
         .end((err, res) => {
           // there should be no errors
           should.not.exist(err);
@@ -102,10 +103,10 @@ describe('routes : videos', () => {
           // the JSON response body should have a
           // key-value pair of {"data": 1 video object}
           res.body.data[0].should.include.keys(
-            'videoID', 'publishedAt', 'title', 'description', 'duration', 'views', 'thumbnails', 'videoUrl'
+            'video_id', 'published_at', 'title', 'description', 'duration', 'views', 'video_url', 'thumbnail_1', 'thumbnail_2', 'thumbnail_3'
           );
           // ensure the video was in fact deleted
-          knex('videos').select('*')
+          knex('video_info').select('*')
           .then((updatedVideos) => {
             updatedVideos.length.should.eql(lengthBeforeDelete - 1);
             done();
@@ -113,7 +114,7 @@ describe('routes : videos', () => {
         });
       });
     });
-    it('should throw an error if the video does not exist [Client]', (done) => {
+    it('should throw an error if the video does not exist', (done) => {
       chai.request(server)
       .delete('/videos/client/delete/9999999')
       .end((err, res) => {
@@ -134,14 +135,15 @@ describe('routes : videos', () => {
     });
   });
 
+  
   describe('[CLIENT] PUT /videos/client/update', () => {
     it('should return the video that was updated', (done) => {
-      knex('videos')
+      knex('video_info')
       .select('*')
       .then((video) => {
         const videoObject = video[0];
         chai.request(server)
-        .put(`/videos/client/update/${videoObject.videoID}`)
+        .put(`/videos/client/update/${videoObject.video_id}`)
         .send({
           title: 'Updated title'
         })
@@ -158,11 +160,12 @@ describe('routes : videos', () => {
           // the JSON response body should have a
           // key-value pair of {"data": 1 video object}
           res.body.data[0].should.include.keys(
-            'videoID', 'publishedAt', 'title', 'description', 'duration', 'views', 'thumbnails', 'videoUrl'
+            'video_id', 'published_at', 'title', 'description', 'duration', 'views', 'video_url', 'thumbnail_1', 'thumbnail_2', 'thumbnail_3'
           );
           // ensure the video was in fact updated
           const newVideoObject = res.body.data[0];
           newVideoObject.title.should.not.eql(videoObject.title);
+          newVideoObject.title.should.eql('Updated title');
           done();
         });
       });
@@ -190,11 +193,12 @@ describe('routes : videos', () => {
       });
     });
   });
-
-  describe('[S&B] GET /videos/search/:videoID ', () => {
+  
+  
+  describe('[S&B] GET /videos/search/:video_id ', () => {
     it('should respond with a single video', (done) => {
       chai.request(server)
-      .get('/videos/search/OPxeCiy0RdY')
+      .get('/videos/search/1')
       .end((err, res) => {
         // there should be no errors
         should.not.exist(err);
@@ -207,19 +211,19 @@ describe('routes : videos', () => {
         res.body.status.should.eql('success');
         // the JSON response body should have a
         // key-value pair of {"data": 1 video object}
-        res.body.data[0].should.include.keys(
-          'videoID', 'publishedAt', 'title', 'description', 'duration', 'views', 'thumbnails', 'videoUrl'
+        res.body.data.should.include.keys(
+          'videoId', 'publishedAt', 'title', 'description', 'duration', 'views', 'videoUrl'
         );
         done();
       });
     });
   });
 
-
-  describe('[TRENDING] GET /videos/search/:videoID ', () => {
+  
+  describe('[TRENDING] GET /videos/search/:video_id ', () => {
     it('should respond with a single video', (done) => {
       chai.request(server)
-      .get('/videos/trending/OPxeCiy0RdY')
+      .get('/videos/trending/1')
       .end((err, res) => {
         // there should be no errors
         should.not.exist(err);
@@ -232,8 +236,8 @@ describe('routes : videos', () => {
         res.body.status.should.eql('success');
         // the JSON response body should have a
         // key-value pair of {"data": 1 video object}
-        res.body.data[0].should.include.keys(
-          'videoID', 'publishedAt', 'title', 'description', 'duration', 'views', 'thumbnails', 'videoUrl'
+        res.body.data.should.include.keys(
+          'videoId', 'publishedAt', 'title', 'description', 'duration', 'views', 'thumbnails'
         );
         done();
       });
@@ -241,11 +245,11 @@ describe('routes : videos', () => {
   });
   
 
-
+  /*
   describe('Handling max duration videos (11 hours) [GET, POST, PUT]', () => {
     it('should respond with a single video w/an 11 hour duration', (done) => {
       chai.request(server)
-      .get('/videos/search/OPxeCiy0RdZs11hrs')
+      .get('/videos/search/3')
       .end((err, res) => {
         // there should be no errors
         should.not.exist(err);
@@ -259,7 +263,7 @@ describe('routes : videos', () => {
         // the JSON response body should have a
         // key-value pair of {"data": 1 video object}
         res.body.data[0].should.include.keys(
-          'videoID', 'publishedAt', 'title', 'description', 'duration', 'views', 'thumbnails', 'videoUrl'
+          'video_id', 'published_at', 'title', 'description', 'duration', 'views', 'video_url', 'thumbnail_1', 'thumbnail_2', 'thumbnail_3'
         );
         //should be able to support duration of 11 hrs
         res.body.data[0].duration.should.eql('39600000');
@@ -270,18 +274,16 @@ describe('routes : videos', () => {
       chai.request(server)
       .post('/videos/client/upload')
       .send({
-          videoID: 'OPxeCiy0RdA11hrs',
-          publishedAt: '2016-02-09T00:05:00.000Z',
-          title: 'AngularJS Tutorial 5',
-          description: 'Get the Code Here',
-          duration: 39600000,
-          views: 1231232,
-          thumbnails: JSON.stringify({
-            default: {},
-            medium: {},
-            high: {},
-          }),
-          videoUrl: "https://i.ytimg.com/vi/OPxeCiy0RdY/hqdefault.jpg"
+        video_id: 5,
+        published_at: '2016-02-09T00:05:00.000Z',
+        title: 'AngularJS Tutorial',
+        description: 'Get the Code Here',
+        duration: 39600000,
+        views: 39600000,
+        video_url: 'https://www.youtube.com/watch?v=3',
+        thumbnail_1: 'https://i.ytimg.com/vi/3/default1.jpg',
+        thumbnail_2: 'https://i.ytimg.com/vi/3/default2.jpg',
+        thumbnail_3: 'https://i.ytimg.com/vi/3/default3.jpg'
       })
       .end((err, res) => {
         // there should be no errors
@@ -297,22 +299,23 @@ describe('routes : videos', () => {
         // the JSON response body should have a
         // key-value pair of {"data": 1 video object}
         res.body.data[0].should.include.keys(
-          'videoID', 'publishedAt', 'title', 'description', 'duration', 'views', 'thumbnails', 'videoUrl'
+          'video_id', 'published_at', 'title', 'description', 'duration', 'views', 'video_url', 'thumbnail_1', 'thumbnail_2', 'thumbnail_3'
         );
         res.body.data[0].duration.should.eql('39600000');
         done();
       });
     });
 
+    
     it('should handle updated duration from <11 hours to 11 hours', (done) => {
-      knex('videos')
+      knex('video_info')
       .select('*')
       .then((video) => {
         const videoObject = video[0];
         chai.request(server)
-        .put(`/videos/client/update/${videoObject.videoID}`)
+        .put(`/videos/client/update/${videoObject.video_id}`)
         .send({
-          duration: '39600000'
+          duration: 39600000
         })
         .end((err, res) => {
           // there should be no errors
@@ -327,7 +330,7 @@ describe('routes : videos', () => {
           // the JSON response body should have a
           // key-value pair of {"data": 1 video object}
           res.body.data[0].should.include.keys(
-            'videoID', 'publishedAt', 'title', 'description', 'duration', 'views', 'thumbnails', 'videoUrl'
+            'video_id', 'published_at', 'title', 'description', 'duration', 'views', 'video_url', 'thumbnail_1', 'thumbnail_2', 'thumbnail_3'
           );
           // ensure the video was in fact updated
           const newVideoObject = res.body.data[0];
@@ -338,11 +341,11 @@ describe('routes : videos', () => {
     });
 
   });
-
+  
   describe('Handling max video views (9223372036854775807) [GET, POST, PUT]', () => {
     it('should respond with a single video w/9223372036854775807 views', (done) => {
       chai.request(server)
-      .get('/videos/search/OPxeCiy0RdZs11hrs')
+      .get('/videos/search/3')
       .end((err, res) => {
         // there should be no errors
         should.not.exist(err);
@@ -356,7 +359,7 @@ describe('routes : videos', () => {
         // the JSON response body should have a
         // key-value pair of {"data": 1 video object}
         res.body.data[0].should.include.keys(
-          'videoID', 'publishedAt', 'title', 'description', 'duration', 'views', 'thumbnails', 'videoUrl'
+          'video_id', 'published_at', 'title', 'description', 'duration', 'views', 'video_url', 'thumbnail_1', 'thumbnail_2', 'thumbnail_3'
         );
         //should be able to support duration of 11 hrs
         res.body.data[0].views.should.eql('922337203685478000');
@@ -368,18 +371,16 @@ describe('routes : videos', () => {
       chai.request(server)
       .post('/videos/client/upload')
       .send({
-          videoID: 'OPxeCiy0RdA11hrs',
-          publishedAt: '2016-02-09T00:05:00.000Z',
-          title: 'AngularJS Tutorial 5',
-          description: 'Get the Code Here',
-          duration: 39600000,
-          views: 922337203685478000,
-          thumbnails: JSON.stringify({
-            default: {},
-            medium: {},
-            high: {},
-          }),
-          videoUrl: "https://i.ytimg.com/vi/OPxeCiy0RdY/hqdefault.jpg"
+        video_id: 5,
+        published_at: '2016-02-09T00:05:00.000Z',
+        title: 'AngularJS Tutorial',
+        description: 'Get the Code Here',
+        duration: 1233,
+        views: 922337203685478000,
+        video_url: 'https://www.youtube.com/watch?v=2',
+        thumbnail_1: 'https://i.ytimg.com/vi/5/default1.jpg',
+        thumbnail_2: 'https://i.ytimg.com/vi/5/default2.jpg',
+        thumbnail_3: 'https://i.ytimg.com/vi/5/default3.jpg'
       })
       .end((err, res) => {
         // there should be no errors
@@ -395,7 +396,7 @@ describe('routes : videos', () => {
         // the JSON response body should have a
         // key-value pair of {"data": 1 video object}
         res.body.data[0].should.include.keys(
-          'videoID', 'publishedAt', 'title', 'description', 'duration', 'views', 'thumbnails', 'videoUrl'
+          'video_id', 'published_at', 'title', 'description', 'duration', 'views', 'video_url', 'thumbnail_1', 'thumbnail_2', 'thumbnail_3'
         );
         res.body.data[0].views.should.eql('922337203685478000');
         done();
@@ -403,14 +404,14 @@ describe('routes : videos', () => {
     });
 
     it('should handle updated duration from <922337203685478000 views to 922337203685478000 views', (done) => {
-      knex('videos')
+      knex('video_info')
       .select('*')
       .then((video) => {
         const videoObject = video[0];
         chai.request(server)
-        .put(`/videos/client/update/${videoObject.videoID}`)
+        .put(`/videos/client/update/${videoObject.video_id}`)
         .send({
-          views: '922337203685478000'
+          views: 922337203685478000
         })
         .end((err, res) => {
           // there should be no errors
@@ -425,7 +426,7 @@ describe('routes : videos', () => {
           // the JSON response body should have a
           // key-value pair of {"data": 1 video object}
           res.body.data[0].should.include.keys(
-            'videoID', 'publishedAt', 'title', 'description', 'duration', 'views', 'thumbnails', 'videoUrl'
+            'video_id', 'published_at', 'title', 'description', 'duration', 'views', 'video_url', 'thumbnail_1', 'thumbnail_2', 'thumbnail_3'
           );
           // ensure the video was in fact updated
           const newVideoObject = res.body.data[0];
@@ -435,7 +436,8 @@ describe('routes : videos', () => {
         });
       });
     });
-
+    
   });
-
+  */
+  
 });

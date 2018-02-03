@@ -86,7 +86,8 @@ router.get(`${BASE_URL}/search/:videoID`, async (ctx) => {
     if (video.length) {
       ctx.body = {
         status: 'success',
-        data: video
+        data: queries.mapVideoObject(video[0], "full")
+        //queries.mapVideoObject(video, "full")
       };
     } else {
       ctx.status = 404;
@@ -106,7 +107,7 @@ router.get(`${BASE_URL}/trending/:videoID`, async (ctx) => {
     if (video.length) {
       ctx.body = {
         status: 'success',
-        data: video
+        data: queries.mapVideoObject(video[0], "summary")
       };
     } else {
       ctx.status = 404;
