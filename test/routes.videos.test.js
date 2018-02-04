@@ -136,7 +136,7 @@ describe('routes : videos', () => {
   });
 
   
-  describe('[CLIENT] PUT /videos/client/update', () => {
+  describe('[CLIENT] PUT /videos/client/update/1', () => {
     it('should return the video that was updated', (done) => {
       knex('video_info')
       .select('*')
@@ -194,7 +194,6 @@ describe('routes : videos', () => {
     });
   });
   
-  
   describe('[S&B] GET /videos/search/:video_id ', () => {
     it('should respond with a single video', (done) => {
       chai.request(server)
@@ -244,7 +243,6 @@ describe('routes : videos', () => {
     });
   });
   
-
   /*
   describe('Handling max duration videos (11 hours) [GET, POST, PUT]', () => {
     it('should respond with a single video w/an 11 hour duration', (done) => {

@@ -7,7 +7,9 @@ const BASE_URL = `/videos`;
 
 router.post(`${BASE_URL}/client/upload`, async (ctx) => {
   try {
+    console.log(ctx.req)
     const video = await queries.addVideo(ctx.request.body);
+    
     if (video.length) {
       ctx.status = 201;
       ctx.body = {
