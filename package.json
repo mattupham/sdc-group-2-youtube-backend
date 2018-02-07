@@ -15,11 +15,15 @@
     "mocha": "3.5.0"
   },
   "dependencies": {
+    "aws-sdk": "^2.190.0",
     "faker": "^4.1.0",
     "knex": "^0.13.0",
     "koa": "^2.3.0",
     "koa-bodyparser": "^4.2.0",
     "koa-router": "^7.2.1",
-    "pg": "^7.1.2"
+    "newrelic": "^2.7.0",
+    "node-uuid": "^1.4.8",
+    "pg": "^7.1.2",
+    "sqs-consumer": "^3.8.0"
   }
 }

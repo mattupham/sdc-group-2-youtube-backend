@@ -83,6 +83,7 @@ router.put(`${BASE_URL}/client/update/:videoID`, async (ctx) => {
 })
 
 router.get(`${BASE_URL}/search/:videoID`, async (ctx) => {
+  console.log(ctx.params.videoID)
   try {
     const video = await queries.getSingleVideo(ctx.params.videoID);
     if (video.length) {
@@ -91,6 +92,7 @@ router.get(`${BASE_URL}/search/:videoID`, async (ctx) => {
         data: queries.mapVideoObject(video[0], "full")
         //queries.mapVideoObject(video, "full")
       };
+      console.log('obj', ctx.body.data);
     } else {
       ctx.status = 404;
       ctx.body = {
@@ -104,6 +106,27 @@ router.get(`${BASE_URL}/search/:videoID`, async (ctx) => {
 })
 
 router.get(`${BASE_URL}/trending/:videoID`, async (ctx) => {
+  try {
+    const video = await queries.getSingleVideo(ctx.params.videoID);
+    if (video.length) {
+      ctx.body = {
+        status: 'success',
+        data: queries.mapVideoObject(video[0], "summary")
+      };
+    } else {
+      ctx.status = 404;
+      ctx.body = {
+        status: 'error',
+        message: 'That video does not exist.'
+      };
+    }
+  } catch (err) {
+    console.log(err)
+  }
+})
+
+//update video views from trending
+router.patch(`${BASE_URL}/trending/updateViews`, async (ctx) => {
   try {
     const video = await queries.getSingleVideo(ctx.params.videoID);
     if (video.length) {

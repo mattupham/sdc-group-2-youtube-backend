@@ -14,7 +14,7 @@ for (var i = 1; i <= 10; i++){
     for (var j = start; j <= stop; j++){
       if (j % 100000 === 0) { console.log('j: ', j) }
       var video_id = j;
-      var published_at = "2018-01-29T22:39:08+00:00"
+      var published_at = "2018-01-29T22:39:08+00:00";
       var title = faker.lorem.sentence();
       var description = faker.lorem.sentence();
       var duration = faker.random.number(10000000);
