@@ -136,7 +136,7 @@ describe('routes : videos', () => {
   });
 
   
-  describe('[CLIENT] PUT /videos/client/update/1', () => {
+  describe('[CLIENT] PUT /videos/client/update/', () => {
     it('should return the video that was updated', (done) => {
       knex('video_info')
       .select('*')
@@ -242,6 +242,74 @@ describe('routes : videos', () => {
       });
     });
   });
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  describe('[TRENDING] Update View Count Query Works', () => {
+    it('should update the view count correctly', (done) => {
+      knex('video_info')
+      .select('*')
+      .then((video) => {
+        const videoObject = video[0];
+        const updateViewAmount = 1;
+        const currentVideoViews = +videoObject.views;
+        const id = +videoObject.video_id;
+        chai.request(server)
+        .put(`/videos/trending/updateViewsTest`)
+        .send({
+          video_id: id,
+          updated_views_addition: updateViewAmount
+        })
+        .end((err, res) => {
+          // there should be no errors
+          should.not.exist(err);
+          // there should be a 200 status code
+          res.status.should.equal(200);
+          // the response should be JSON
+          res.type.should.equal('application/json');
+          // the JSON response body should have a
+          // key-value pair of {"status": "success"}
+          res.body.status.should.eql('success');
+          // the JSON response body should have a
+          // key-value pair of {"data": 1 video object}
+          res.body.data[0].should.include.keys(
+            'video_id', 'published_at', 'title', 'description', 'duration', 'views', 'video_url', 'thumbnail_1', 'thumbnail_2', 'thumbnail_3'
+          );
+          // ensure the video was in fact updated
+          const newVideoObject = res.body.data[0];
+          const updatedViewAmountString = (+videoObject.views + updateViewAmount).toString();
+          newVideoObject.views.should.not.eql(videoObject.views);
+          newVideoObject.views.should.eql(updatedViewAmountString);
+          done();
+        });
+      });
+    });
+    it('should throw an error if the video does not exist', (done) => {
+      chai.request(server)
+      .put('/videos/trending/updateViewsTest')
+      .send({
+        video_id: 99999999999,
+        updated_views_addition: 1
+      })
+      .end((err, res) => {
+        // there should an error
+        should.exist(err);
+        // there should be a 404 status code
+        res.status.should.equal(404);
+        // the response should be JSON
+        res.type.should.equal('application/json');
+        // the JSON response body should have a
+        // key-value pair of {"status": "error"}
+        res.body.status.should.eql('error');
+        // the JSON response body should have a
+        // key-value pair of {"message": "That video does not exist."}
+        res.body.message.should.eql('That video does not exist.');
+        done();
+      });
+    });
+  });
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
   /*
   describe('Handling max duration videos (11 hours) [GET, POST, PUT]', () => {

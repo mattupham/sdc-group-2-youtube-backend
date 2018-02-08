@@ -1,11 +1,13 @@
-const Consumer = require('sqs-consumer');
-const AWS = require('aws-sdk');
-const sqs = new AWS.SQS();
+// const Consumer = require('sqs-consumer');
+// const AWS = require('aws-sdk');
+// const sqs = new AWS.SQS();
 
 
 
 const Router = require('koa-router');
 const queries = require('../db/queries/videos');
+
+const sqs = require(__dirname + '/../sqs/index.js');
 
 const router = new Router();
 
@@ -131,43 +133,34 @@ router.get(`${BASE_URL}/trending/:videoID`, async (ctx) => {
   }
 })
 
-
-
 //update video views from trending (Message Bus) -> http route for test purposes
 router.put(`${BASE_URL}/trending/updateViewsTest`, async (ctx) => {
-  // console.log('typeof body', typeof ctx.request.body)
-  var params = {
-    MessageBody: ctx.request.body,
-    QueueUrl: 'https://sqs.us-west-2.amazonaws.com/874598638646/trending_views',
-    DelaySeconds: 1,
-  };
-
-  sqs.sendMessage(params, function(err, data) {
-    if (err) console.log(err, err.stack); // an error occurred
-    else     console.log(data);           // successful response
-  });
-
-  // try {
-  //   if (video.length) {
-  //     ctx.status = 200;
-  //     ctx.body = {
-  //       status: 'success',
-  //       data: video
-  //     };
-  //   } else {
-  //     ctx.status = 404;
-  //     ctx.body = {
-  //       status: 'error',
-  //       message: 'That video does not exist.'
-  //     };
-  //   }
-  // } catch (err) {
-  //   ctx.status = 400;
-  //   ctx.body = {
-  //     status: 'error',
-  //     message: err.message || 'Sorry, an error has occurred.'
-  //   };
-  // }
+  let id = ctx.request.body.video_id;
+  // console.log('id in route', id)
+  let viewCountAddition = ctx.request.body.updated_views_addition;
+  try {
+    const video = await queries.updateVideoViewCount(id, viewCountAddition);
+    // console.log('video', video);
+    if (video.length) {
+      ctx.status = 200;
+      ctx.body = {
+        status: 'success',
+        data: video
+      };
+    } else {
+      ctx.status = 404;
+      ctx.body = {
+        status: 'error',
+        message: 'That video does not exist.'
+      };
+    }
+  } catch (err) {
+    ctx.status = 400;
+    ctx.body = {
+      status: 'error',
+      message: err.message || 'Sorry, an error has occurred.'
+    };
+  }
 })
 
 

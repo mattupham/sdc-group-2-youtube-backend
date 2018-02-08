@@ -70,6 +70,26 @@ function deleteVideo(video_id) {
   .returning('*');
 }
 
+//update video view count from trending service
+function updateVideoViewCount(video_id, viewCountAddition){
+  console.log('video id in db', video_id)
+  console.log('view count addition in db', viewCountAddition)
+  return knex('video_info')
+  .update({views: knex.raw('?? + ?', ['views', viewCountAddition]) })
+  .where(knex.raw(`video_id = ?`, [video_id]))
+  .returning('*');
+}
+
+// 'UPDATE video_info SET views = views + 1 WHERE video_id = 1'
+
+// function updateMovies(arr) {
+//   return knex('movies')
+//   .update({recent_views: parseInt(newViews)})
+//   .update({total_views: knex.raw('?? + ?', ['total_views', newViews])})
+//   .where(knex.raw('video_id = ?', [id]))
+//   .returning('*');
+// }
+
 module.exports = {
   getAllVideos,
   getSingleVideo,
@@ -77,5 +97,6 @@ module.exports = {
   updateVideo,
   deleteVideo,
   mapVideoObject,
-  createThumbnailObject
+  createThumbnailObject,
+  updateVideoViewCount
 };

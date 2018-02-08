@@ -2,7 +2,7 @@
 const nr = require('newrelic');
 
 //sqs
-const sqs = require(__dirname + '/sqs');
+const awsMessageBus = require(__dirname + '/sqs/index.js');
 
 //requre koa
 const Koa = require('koa');
