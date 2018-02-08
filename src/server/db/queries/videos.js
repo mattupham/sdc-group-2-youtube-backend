@@ -51,7 +51,6 @@ function getSingleVideo(video_id) {
 }
 
 function addVideo(video) {
-  console.log('video', video)
   return knex('video_info')
   .insert(video)
   .returning('*');

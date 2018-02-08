@@ -1,3 +1,9 @@
+const Consumer = require('sqs-consumer');
+const AWS = require('aws-sdk');
+const sqs = new AWS.SQS();
+
+
+
 const Router = require('koa-router');
 const queries = require('../db/queries/videos');
 
@@ -7,7 +13,7 @@ const BASE_URL = `/videos`;
 
 router.post(`${BASE_URL}/client/upload`, async (ctx) => {
   try {
-    console.log(ctx.req)
+    // console.log(ctx.req)
     const video = await queries.addVideo(ctx.request.body);
     
     if (video.length) {
@@ -83,7 +89,7 @@ router.put(`${BASE_URL}/client/update/:videoID`, async (ctx) => {
 })
 
 router.get(`${BASE_URL}/search/:videoID`, async (ctx) => {
-  console.log(ctx.params.videoID)
+  // console.log(ctx.params.videoID)
   try {
     const video = await queries.getSingleVideo(ctx.params.videoID);
     if (video.length) {
@@ -92,7 +98,7 @@ router.get(`${BASE_URL}/search/:videoID`, async (ctx) => {
         data: queries.mapVideoObject(video[0], "full")
         //queries.mapVideoObject(video, "full")
       };
-      console.log('obj', ctx.body.data);
+      // console.log('obj', ctx.body.data);
     } else {
       ctx.status = 404;
       ctx.body = {
@@ -125,26 +131,48 @@ router.get(`${BASE_URL}/trending/:videoID`, async (ctx) => {
   }
 })
 
-//update video views from trending
-router.patch(`${BASE_URL}/trending/updateViews`, async (ctx) => {
-  try {
-    const video = await queries.getSingleVideo(ctx.params.videoID);
-    if (video.length) {
-      ctx.body = {
-        status: 'success',
-        data: queries.mapVideoObject(video[0], "summary")
-      };
-    } else {
-      ctx.status = 404;
-      ctx.body = {
-        status: 'error',
-        message: 'That video does not exist.'
-      };
-    }
-  } catch (err) {
-    console.log(err)
-  }
+
+
+//update video views from trending (Message Bus) -> http route for test purposes
+router.put(`${BASE_URL}/trending/updateViewsTest`, async (ctx) => {
+  // console.log('typeof body', typeof ctx.request.body)
+  var params = {
+    MessageBody: ctx.request.body,
+    QueueUrl: 'https://sqs.us-west-2.amazonaws.com/874598638646/trending_views',
+    DelaySeconds: 1,
+  };
+
+  sqs.sendMessage(params, function(err, data) {
+    if (err) console.log(err, err.stack); // an error occurred
+    else     console.log(data);           // successful response
+  });
+
+  // try {
+  //   if (video.length) {
+  //     ctx.status = 200;
+  //     ctx.body = {
+  //       status: 'success',
+  //       data: video
+  //     };
+  //   } else {
+  //     ctx.status = 404;
+  //     ctx.body = {
+  //       status: 'error',
+  //       message: 'That video does not exist.'
+  //     };
+  //   }
+  // } catch (err) {
+  //   ctx.status = 400;
+  //   ctx.body = {
+  //     status: 'error',
+  //     message: err.message || 'Sorry, an error has occurred.'
+  //   };
+  // }
 })
+
+
+
+
 
 
 
