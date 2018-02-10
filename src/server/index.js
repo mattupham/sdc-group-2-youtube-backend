@@ -17,6 +17,10 @@ app.use(bodyParser());
 app.use(indexRoutes.routes());
 app.use(videoRoutes.routes());
 
+const cronService = require('./cronService.js');
+//runs cronJob
+cronService.updateServicesCronJob.start();
+
 const server = app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`);
 });
