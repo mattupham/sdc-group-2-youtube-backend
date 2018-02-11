@@ -9,12 +9,17 @@ const router = new Router();
 const BASE_URL = `/videos`;
 const cronService = require('../cronService.js');
 
+//DONE
 router.post(`${BASE_URL}/client/upload`, async (ctx) => {
   try {
     // console.log(ctx.req)
     const video = await queries.addVideo(ctx.request.body);
-    
+    //add to createdVideos
     if (video.length) {
+      //turns object into summary object
+      let summaryVideoObject = Object.assign({}, video[0]);
+      delete summaryVideoObject.video_url;
+      cronService.cronStorage.createdVideos.push(summaryVideoObject);
       ctx.status = 201;
       ctx.body = {
         status: 'success',
@@ -36,11 +41,11 @@ router.post(`${BASE_URL}/client/upload`, async (ctx) => {
   }
 })
 
+//DONE
 router.delete(`${BASE_URL}/client/delete/:videoID`, async (ctx) => {
   try {
     videoId = +ctx.params.videoID;
     const videos = await queries.deleteVideo(videoId);
-    
     if (videos.length) {
       //push videoID to CronService
       cronService.cronStorage.deletedVideos.push({"videoId": videoId});
@@ -69,7 +74,12 @@ router.delete(`${BASE_URL}/client/delete/:videoID`, async (ctx) => {
 router.put(`${BASE_URL}/client/update/:videoID`, async (ctx) => {
   try {
     const video = await queries.updateVideo(ctx.params.videoID, ctx.request.body);
+    // console.log('body', ctx.request.body);
     if (video.length) {
+      let updatedVideoObject = Object.assign({}, ctx.request.body)
+      Object.defineProperty(updatedVideoObject, 'videoId', Object.getOwnPropertyDescriptor(updatedVideoObject, 'video_id'));
+      delete updatedVideoObject['video_id'];
+      cronService.cronStorage.updatedVideos.push(updatedVideoObject);
       ctx.status = 200;
       ctx.body = {
         status: 'success',
@@ -139,8 +149,9 @@ router.put(`${BASE_URL}/trending/updateViewsTest`, async (ctx) => {
   let viewCountAddition = ctx.request.body.updated_views_addition;
   try {
     const video = await queries.updateVideoViewCount(id, viewCountAddition);
-    // console.log('video', video);
+    console.log('video', video);
     if (video.length) {
+      cronService.cronStorage.deletedVideos.push({"videoId": videoId});
       ctx.status = 200;
       ctx.body = {
         status: 'success',

@@ -6,8 +6,8 @@ const awsMessageBus = require(__dirname + '/sqs/index.js');
 //send and reset arrays
 let cronStorage = {
   updatedVideoViews: [], //to S&B
-  updatedVideos: [],     //to S&B
   createdVideos: [],     //to S&B
+  updatedVideos: [],     //to S&B
   deletedVideos: [],     //to S&B/Trending
 }
 
@@ -19,19 +19,34 @@ let cronStorage = {
   //list of summary video objects
 
 //S&B ->        delete video update  (MB)
-  //list of videoIds
-  //delete request comes in
-  //ads id object to cronStorage
-  //every 15 minutes, shoots videos into S&B
 
 //Trending ->  delete video update   (MB)
 
 let updateServicesCronJob = new CronJob('*/5 * * * * *', function() {
   //dump whole cronStorage object into SQS avenues
   console.log('You will see this message every 5 seconds');
-  // console.log('deleted videos: ', cronStorage.deletedVideos);
-  awsMessageBus.sendToTrending(cronStorage.deletedVideos);
-  awsMessageBus.sendToSearchAndBrowse(cronStorage.deletedVideos);
+  //updatedVideoViews
+  // awsMessageBus.sendToSearchAndBrowse({videoList: cronStorage.updatedVideoViews});
+  //createdVideos
+  // awsMessageBus.sendToSearchAndBrowse({videoList: cronStorage.createdVideos});
+  //updatedVideos
+  awsMessageBus.sendToSearchAndBrowse({videoList: cronStorage.updatedVideos});
+  //deletedVideos
+  // awsMessageBus.sendToSearchAndBrowse({videoList: cronStorage.deletedVideos});
+  // awsMessageBus.sendToTrending({videoList: cronStorage.deletedVideos});
+
+  //reset cron storage
+  /*
+  let cronStorage = {
+    updatedVideoViews: [], //to S&B
+    createdVideos: [],     //to S&B
+    updatedVideos: [],     //to S&B
+    deletedVideos: [],     //to S&B/Trending
+  }
+  */
+  
+
+  
 }, null, true, 'America/Los_Angeles');
 
 module.exports = {

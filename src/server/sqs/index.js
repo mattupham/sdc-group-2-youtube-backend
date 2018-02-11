@@ -23,8 +23,8 @@ const appConsumer = Consumer.create({
 });
 
 const sendToTrending = function(body){
-  console.log('send to trending: ', body)
   body = JSON.stringify(body);
+  console.log('send to trending: ', body)
   var params = {
     MessageBody: body,
     //trending url
