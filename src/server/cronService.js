@@ -1,5 +1,6 @@
 var CronJob = require('cron').CronJob;
 //15 min: '*/15 * * * *'
+const awsMessageBus = require(__dirname + '/sqs/index.js');
 
 //15 minutes
 //send and reset arrays
@@ -28,7 +29,9 @@ let cronStorage = {
 let updateServicesCronJob = new CronJob('*/5 * * * * *', function() {
   //dump whole cronStorage object into SQS avenues
   console.log('You will see this message every 5 seconds');
-  console.log('deleted videos: ', cronStorage.deletedVideos);
+  // console.log('deleted videos: ', cronStorage.deletedVideos);
+  awsMessageBus.sendToTrending(cronStorage.deletedVideos);
+  awsMessageBus.sendToSearchAndBrowse(cronStorage.deletedVideos);
 }, null, true, 'America/Los_Angeles');
 
 module.exports = {
