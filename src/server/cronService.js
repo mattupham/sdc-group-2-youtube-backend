@@ -26,7 +26,7 @@ let updateServicesCronJob = new CronJob('*/5 * * * * *', function() {
   //dump whole cronStorage object into SQS avenues
   console.log('You will see this message every 5 seconds');
   //updatedVideoViews
-  // awsMessageBus.sendToSearchAndBrowse({videoList: cronStorage.updatedVideoViews});
+  awsMessageBus.sendToSearchAndBrowse({videoList: cronStorage.updatedVideoViews});
   //createdVideos
   // awsMessageBus.sendToSearchAndBrowse({videoList: cronStorage.createdVideos});
   //updatedVideos

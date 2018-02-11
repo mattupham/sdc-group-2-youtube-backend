@@ -8,6 +8,8 @@ const sqs = new AWS.SQS();
 AWS.config.loadFromPath(__dirname + '/config.json');
 const queries = require(__dirname + '/../db/queries/videos.js');
 
+// const cronService = require('../cronService.js');
+
 // console.log('path: ', __dirname + '/config.json');
 const appConsumer = Consumer.create({
   queueUrl: 'https://sqs.us-west-2.amazonaws.com/874598638646/trending_views',
@@ -16,7 +18,16 @@ const appConsumer = Consumer.create({
     console.log('incoming MB object', updateVideoObject);
     let id = updateVideoObject.video_id;
     let viewCountAddition = updateVideoObject.updated_views_addition;
-    await queries.updateVideoViewCount(id, viewCountAddition);
+    let updatedVideo = await queries.updateVideoViewCount(id, viewCountAddition);
+    
+    //CIRCULAR DEPENDENCY NEEDS TO BE FIXED
+
+    // console.log('updated video', updatedVideo[0]);
+    //add to updatedVideoViews {id, updatedViewCount}
+    // cronService.cronStorage.updatedVideoViews.push({
+    //   'id': updatedVideo[0].video_id,
+    //   'updatedViewCount': updatedVideo[0].views
+    // })
     done();
   },
   sqs: new AWS.SQS()
