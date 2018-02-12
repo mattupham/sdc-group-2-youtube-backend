@@ -2,55 +2,29 @@ var CronJob = require('cron').CronJob;
 //15 min: '*/15 * * * *'
 const awsMessageBus = require(__dirname + '/sqs/index.js');
 const cronStorage = require('./cronStorage.js')
-//15 minutes
-//send and reset arrays
-/*
-let cronStorage = {
-  updatedVideoViews: [], //to S&B
-  createdVideos: [],     //to S&B
-  updatedVideos: [],     //to S&B
-  deletedVideos: [],     //to S&B/Trending
-}
-*/
 
-//S&B ->        views update         (MB)
-  //list of ids/updatedViewCounts
-//S&B ->        update video update  (MB)
-  //list of ids/updatedInformation
-//S&B ->        create video update  (MB)
-  //list of summary video objects
-
-//S&B ->        delete video update  (MB)
-
-//Trending ->  delete video update   (MB)
 
 let updateServicesCronJob = new CronJob('*/5 * * * * *', function() {
-  //dump whole cronStorage object into SQS avenues
+  
+  //sends all information to services
   console.log('You will see this message every 5 seconds');
   //updatedVideoViews
-  awsMessageBus.sendToSearchAndBrowse({videoList: cronStorage.updatedVideoViews});
+  awsMessageBus.sendToSearchAndBrowse({videoList: cronStorage.cronStorage.updatedVideoViews});
   //createdVideos
-  // awsMessageBus.sendToSearchAndBrowse({videoList: cronStorage.createdVideos});
+  awsMessageBus.sendToSearchAndBrowse({videoList: cronStorage.cronStorage.createdVideos});
   //updatedVideos
-  awsMessageBus.sendToSearchAndBrowse({videoList: cronStorage.updatedVideos});
+  awsMessageBus.sendToSearchAndBrowse({videoList: cronStorage.cronStorage.updatedVideos});
   //deletedVideos
-  // awsMessageBus.sendToSearchAndBrowse({videoList: cronStorage.deletedVideos});
-  // awsMessageBus.sendToTrending({videoList: cronStorage.deletedVideos});
+  awsMessageBus.sendToSearchAndBrowse({videoList: cronStorage.cronStorage.deletedVideos});
+  awsMessageBus.sendToTrending({videoList: cronStorage.cronStorage.deletedVideos});
 
   //reset cron storage
-  /*
-  cronStorage.updatedVideoViews = [], //to S&B
-  cronStorage.createdVideos = [],     //to S&B
-  cronStorage.updatedVideos = [],     //to S&B
-  cronStorage.deletedVideos = [],     //to S&B/Trending
-  }
-  */
-  
-
-  
+  cronStorage.cronStorage.updatedVideoViews = []; //to S&B
+  cronStorage.cronStorage.createdVideos = [];     //to S&B
+  cronStorage.cronStorage.updatedVideos = [];     //to S&B
+  cronStorage.cronStorage.deletedVideos = [];     //to S&B/Trending
 }, null, true, 'America/Los_Angeles');
 
 module.exports = {
-  // cronStorage,
   updateServicesCronJob
 }
