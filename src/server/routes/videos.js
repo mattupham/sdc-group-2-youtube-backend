@@ -8,6 +8,7 @@ const sqs = require(__dirname + '/../sqs/index.js');
 const router = new Router();
 const BASE_URL = `/videos`;
 const cronService = require('../cronService.js');
+const cronStorage = require('../cronStorage.js');
 
 //DONE
 router.post(`${BASE_URL}/client/upload`, async (ctx) => {

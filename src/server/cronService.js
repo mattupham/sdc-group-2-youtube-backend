@@ -1,15 +1,17 @@
 var CronJob = require('cron').CronJob;
 //15 min: '*/15 * * * *'
 const awsMessageBus = require(__dirname + '/sqs/index.js');
-
+const cronStorage = require('./cronStorage.js')
 //15 minutes
 //send and reset arrays
+/*
 let cronStorage = {
   updatedVideoViews: [], //to S&B
   createdVideos: [],     //to S&B
   updatedVideos: [],     //to S&B
   deletedVideos: [],     //to S&B/Trending
 }
+*/
 
 //S&B ->        views update         (MB)
   //list of ids/updatedViewCounts
@@ -37,11 +39,10 @@ let updateServicesCronJob = new CronJob('*/5 * * * * *', function() {
 
   //reset cron storage
   /*
-  let cronStorage = {
-    updatedVideoViews: [], //to S&B
-    createdVideos: [],     //to S&B
-    updatedVideos: [],     //to S&B
-    deletedVideos: [],     //to S&B/Trending
+  cronStorage.updatedVideoViews = [], //to S&B
+  cronStorage.createdVideos = [],     //to S&B
+  cronStorage.updatedVideos = [],     //to S&B
+  cronStorage.deletedVideos = [],     //to S&B/Trending
   }
   */
   
@@ -50,6 +51,6 @@ let updateServicesCronJob = new CronJob('*/5 * * * * *', function() {
 }, null, true, 'America/Los_Angeles');
 
 module.exports = {
-  cronStorage,
+  // cronStorage,
   updateServicesCronJob
 }
