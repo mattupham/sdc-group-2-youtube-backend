@@ -3,32 +3,8 @@ config:
   processor: "./artillery.generate.data.js"
   phases:
   
-    # - duration: 30
-    #   arrivalRate: 300
-    # - duration: 10
-    #   arrivalRate: 300
-    #   rampTo: 600
-
-    # - duration: 30
-    #   arrivalRate: 600
-    # - duration: 10
-    #   arrivalRate: 600
-    #   rampTo: 900
-
-    # - duration: 30
-    #   arrivalRate: 900
-    # - duration: 10
-    #   arrivalRate: 900
-    #   rampTo: 1200
-
-    # - duration: 30
-    #   arrivalRate: 1200
-    # - duration: 10
-    #   arrivalRate: 1200
-    #   rampTo: 1500
-
     - duration: 30
-      arrivalRate: 10
+      arrivalRate: 500
 
   defaults:
     headers:
@@ -36,10 +12,10 @@ config:
 scenarios:
   - name: "S&B gets a video"
     flow:
-      - loop: 
-        - function: "generateRandomIds"
-        - get:
-            url: "/videos/search/{{ videoId }}"
+      # - loop: 
+      - function: "generateRandomIds"
+      - get:
+          url: "/videos/search/{{ videoId }}"
         # Print the data we're sending while debugging the script:
-        - log: "Sent a request to {{ videoId }}"
-        count: 50
+      - log: "Sent a request to {{ videoId }}"
+        # count: 50
