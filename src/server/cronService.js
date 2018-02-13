@@ -5,7 +5,7 @@ const cronStorage = require('./cronStorage.js')
 
 
 let updateServicesCronJob = new CronJob('*/5 * * * * *', function() {
-  
+  /*
   //sends all information to services
   console.log('You will see this message every 5 seconds');
   //updatedVideoViews
@@ -23,7 +23,9 @@ let updateServicesCronJob = new CronJob('*/5 * * * * *', function() {
   cronStorage.cronStorage.createdVideos = [];     //to S&B
   cronStorage.cronStorage.updatedVideos = [];     //to S&B
   cronStorage.cronStorage.deletedVideos = [];     //to S&B/Trending
+  */
 }, null, true, 'America/Los_Angeles');
+
 
 module.exports = {
   updateServicesCronJob

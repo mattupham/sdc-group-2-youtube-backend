@@ -9,6 +9,7 @@ const router = new Router();
 const BASE_URL = `/videos`;
 const cronService = require('../cronService.js');
 const cronStorage = require('../cronStorage.js');
+const redis = require('../redisHelper.js');
 
 //DONE
 router.post(`${BASE_URL}/client/upload`, async (ctx) => {
@@ -123,6 +124,40 @@ router.get(`${BASE_URL}/search/:videoID`, async (ctx) => {
     console.log(err)
   }
 })
+
+
+
+// router.get(`${BASE_URL}/search/:videoID`, async (ctx) => {
+//   try {
+//     //check redis cache with await
+//     const cachedVideo = await redis.getFromCache(ctx.params.videoID);
+//     console.log('CACHED VIDEO', JSON.parse(cachedVideo));
+//     //if cached video not null, ctx body and ctx status
+//     //if video is null
+//       //query from postgres
+//       //place query from postgres into redis
+
+
+//     /*
+//     const video = await queries.getSingleVideo(ctx.params.videoID);
+//     if (video.length) {
+//       ctx.body = {
+//         status: 'success',
+//         data: queries.mapVideoObject(video[0], "full")
+//       };
+//     } else {
+//       ctx.status = 404;
+//       ctx.body = {
+//         status: 'error',
+//         message: 'That video does not exist.'
+//       };
+//     }
+//     */
+//   } catch (err) {
+//     console.log(err)
+//   }
+// })
+
 
 router.get(`${BASE_URL}/trending/:videoID`, async (ctx) => {
   try {
