@@ -12,14 +12,13 @@ const cronStorage = require('../cronStorage.js');
 const appConsumer = Consumer.create({
   queueUrl: 'https://sqs.us-west-2.amazonaws.com/874598638646/trending_views',
   handleMessage: async (message, done) => {
-    // console.log('message body: ', message.Body)
     let updateVideoObject = JSON.parse(message.Body);
     let id = updateVideoObject.video_id;
     let viewCountAddition = updateVideoObject.updated_views_addition;
     let updatedVideo = await queries.updateVideoViewCount(id, viewCountAddition);
-    //add to updatedVideoViews {id, updatedViewCount}
+    
     cronStorage.cronStorage.updatedVideoViews.push({
-      'videoId': updatedVideo[0].video_id,
+      'video_id': updatedVideo[0].video_id,
       'updatedViewCount': updatedVideo[0].views
     })
     done();

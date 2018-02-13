@@ -44,14 +44,14 @@ router.post(`${BASE_URL}/client/upload`, async (ctx) => {
 })
 
 //DONE
-router.delete(`${BASE_URL}/client/delete/:videoID`, async (ctx) => {
+router.delete(`${BASE_URL}/client/delete/:video_id`, async (ctx) => {
   try {
-    videoId = +ctx.params.videoID;
-    const videos = await queries.deleteVideo(videoId);
+    video_id = +ctx.params.video_id;
+    const videos = await queries.deleteVideo(video_id);
     if (videos.length) {
-      //push videoID to CronService
-      cronStorage.cronStorage.deletedVideos.push({"videoId": videoId});
-      console.log('deletedVideos: ', cronStorage.cronStorage.deletedVideos);
+      //push video_id to CronService
+      cronStorage.cronStorage.deletedVideos.push({"video_id": video_id});
+      // console.log('deletedVideos: ', cronStorage.cronStorage.deletedVideos);
       ctx.status = 200;
       ctx.body = {
         status: 'success',
@@ -73,16 +73,12 @@ router.delete(`${BASE_URL}/client/delete/:videoID`, async (ctx) => {
   }
 })
 
-router.put(`${BASE_URL}/client/update/:videoID`, async (ctx) => {
+router.put(`${BASE_URL}/client/update/:video_id`, async (ctx) => {
   try {
-    const video = await queries.updateVideo(ctx.params.videoID, ctx.request.body);
-    console.log('body', ctx.request.body);
+    const video = await queries.updateVideo(ctx.params.video_id, ctx.request.body);
+    // console.log('body', ctx.request.body);
     if (video.length) {
-      let updatedVideoObject = Object.assign({}, ctx.request.body)
-      Object.defineProperty(updatedVideoObject, 'videoId', Object.getOwnPropertyDescriptor(updatedVideoObject, 'video_id'));
-      delete updatedVideoObject['video_id'];
-      console.log('updated video object', updatedVideoObject);
-      cronStorage.cronStorage.updatedVideos.push(updatedVideoObject);
+      cronStorage.cronStorage.updatedVideos.push(ctx.request.body);
       ctx.status = 200;
       ctx.body = {
         status: 'success',
@@ -104,10 +100,10 @@ router.put(`${BASE_URL}/client/update/:videoID`, async (ctx) => {
   }
 })
 
-router.get(`${BASE_URL}/search/:videoID`, async (ctx) => {
-  // console.log(ctx.params.videoID)
+router.get(`${BASE_URL}/search/:video_id`, async (ctx) => {
+  // console.log(ctx.params.video_id)
   try {
-    const video = await queries.getSingleVideo(ctx.params.videoID);
+    const video = await queries.getSingleVideo(ctx.params.video_id);
     if (video.length) {
       ctx.body = {
         status: 'success',
@@ -127,10 +123,10 @@ router.get(`${BASE_URL}/search/:videoID`, async (ctx) => {
 
 
 
-// router.get(`${BASE_URL}/search/:videoID`, async (ctx) => {
+// router.get(`${BASE_URL}/search/:video_id`, async (ctx) => {
 //   try {
 //     //check redis cache with await
-//     const cachedVideo = await redis.getFromCache(ctx.params.videoID);
+//     const cachedVideo = await redis.getFromCache(ctx.params.video_id);
 //     console.log('CACHED VIDEO', JSON.parse(cachedVideo));
 //     //if cached video not null, ctx body and ctx status
 //     //if video is null
@@ -139,7 +135,7 @@ router.get(`${BASE_URL}/search/:videoID`, async (ctx) => {
 
 
 //     /*
-//     const video = await queries.getSingleVideo(ctx.params.videoID);
+//     const video = await queries.getSingleVideo(ctx.params.video_id);
 //     if (video.length) {
 //       ctx.body = {
 //         status: 'success',
@@ -159,9 +155,9 @@ router.get(`${BASE_URL}/search/:videoID`, async (ctx) => {
 // })
 
 
-router.get(`${BASE_URL}/trending/:videoID`, async (ctx) => {
+router.get(`${BASE_URL}/trending/:video_id`, async (ctx) => {
   try {
-    const video = await queries.getSingleVideo(ctx.params.videoID);
+    const video = await queries.getSingleVideo(ctx.params.video_id);
     if (video.length) {
       ctx.body = {
         status: 'success',
@@ -188,7 +184,7 @@ router.put(`${BASE_URL}/trending/updateViewsTest`, async (ctx) => {
     const video = await queries.updateVideoViewCount(id, viewCountAddition);
     console.log('video', video);
     if (video.length) {
-      cronStorage.cronStorage.deletedVideos.push({"videoId": videoId});
+      cronStorage.cronStorage.deletedVideos.push({"video_id": video_id});
       ctx.status = 200;
       ctx.body = {
         status: 'success',

@@ -211,7 +211,7 @@ describe('routes : videos', () => {
         // the JSON response body should have a
         // key-value pair of {"data": 1 video object}
         res.body.data.should.include.keys(
-          'videoId', 'publishedAt', 'title', 'description', 'duration', 'views', 'videoUrl'
+          'video_id', 'publishedAt', 'title', 'description', 'duration', 'views', 'videoUrl'
         );
         done();
       });
@@ -236,7 +236,7 @@ describe('routes : videos', () => {
         // the JSON response body should have a
         // key-value pair of {"data": 1 video object}
         res.body.data.should.include.keys(
-          'videoId', 'publishedAt', 'title', 'description', 'duration', 'views', 'thumbnails'
+          'video_id', 'publishedAt', 'title', 'description', 'duration', 'views', 'thumbnails'
         );
         done();
       });

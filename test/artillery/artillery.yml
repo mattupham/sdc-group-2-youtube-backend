@@ -15,7 +15,7 @@ scenarios:
       # - loop: 
       - function: "generateRandomIds"
       - get:
-          url: "/videos/search/{{ videoId }}"
+          url: "/videos/search/{{ video_id }}"
         # Print the data we're sending while debugging the script:
-      - log: "Sent a request to {{ videoId }}"
+      - log: "Sent a request to {{ video_id }}"
         # count: 50

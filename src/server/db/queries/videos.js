@@ -1,9 +1,8 @@
 const knex = require('../connection');
 
 function mapVideoObject(queryReturn, summaryOrFull){
-  // console.log('query return', queryReturn)
   let videoObject =  {
-    videoId: +queryReturn["video_id"],
+    video_id: +queryReturn["video_id"],
     publishedAt: queryReturn["published_at"],
     title: queryReturn["title"],
     description:queryReturn["description"],
@@ -72,23 +71,13 @@ function deleteVideo(video_id) {
 
 //update video view count from trending service
 function updateVideoViewCount(video_id, viewCountAddition){
-  console.log('video id in db', video_id)
-  console.log('view count addition in db', viewCountAddition)
+  // console.log('video id in db', video_id)
+  // console.log('view count addition in db', viewCountAddition)
   return knex('video_info')
   .update({views: knex.raw('?? + ?', ['views', viewCountAddition]) })
   .where(knex.raw(`video_id = ?`, [video_id]))
   .returning('*');
 }
-
-// 'UPDATE video_info SET views = views + 1 WHERE video_id = 1'
-
-// function updateMovies(arr) {
-//   return knex('movies')
-//   .update({recent_views: parseInt(newViews)})
-//   .update({total_views: knex.raw('?? + ?', ['total_views', newViews])})
-//   .where(knex.raw('video_id = ?', [id]))
-//   .returning('*');
-// }
 
 module.exports = {
   getAllVideos,
