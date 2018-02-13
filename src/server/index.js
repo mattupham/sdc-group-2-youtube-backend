@@ -4,6 +4,9 @@ const nr = require('newrelic');
 //sqs
 const awsMessageBus = require(__dirname + '/sqs/index.js');
 
+//redis
+const redis = require('./redisHelper.js');
+
 //requre koa
 const Koa = require('koa');
 const bodyParser = require('koa-bodyparser');
