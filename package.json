@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./src/server/index.js",
+    "start": "nodemon --inspect ./src/server/index.js",
     "test": "nyc mocha"
   },
   "keywords": [],
