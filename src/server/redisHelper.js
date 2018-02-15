@@ -3,6 +3,19 @@ const Promise = require('bluebird');
 Promise.promisifyAll(redis.RedisClient.prototype);
 Promise.promisifyAll(redis.Multi.prototype);
 const client = redis.createClient();
+var CronJob = require('cron').CronJob;
+
+let redisStore = [];
+//loop through redis store, add to cachce every 15 min cron job
+// console.log('redis store: ', redisStore);
+
+let insertIntoRedisTimer = new CronJob('*/5 * * * * *', function() {
+  redisStore.forEach(function(video){
+    // console.log('id: ', JSON.stringify(video.video_id));
+    // console.log('video', JSON.stringify(video));
+    addToCache( video.video_id, video );
+  });
+}, null, true, 'America/Los_Angeles');
 
 //generate data
   //100k get requests
@@ -19,12 +32,16 @@ client.on('error', err => {
 
 
 const getFromCache = (id) => {
-  return client.getAsync(JSON.stringify(+id))
+  // return client.getAsync(JSON.stringify(+id))
+  const now = Date.now();
+  return client.getAsync(id)
   .then(function(res) {
-    console.log('REDIS RESPONSE: ', res);
+    // console.log('Success time to get from cache ', Date.now() - now)
+    // console.log('REDIS RESPONSE: ', res);
     // console.log('Typeof redis Response: ', typeof JSON.parse(res));
     //returns response as an object
     return JSON.parse(res);
+    // return res;
   });
 }
 
@@ -32,15 +49,19 @@ const addToCache = (id, obj) => {
 // const addToCache = (id, obj, expiration) => {
   //custom query will cache for 10 sec
   // expiration = expiration || 1000;
-  console.log('Adding cache with key: ', JSON.stringify(id));
-  console.log('Adding cache with value: ', JSON.stringify(obj));
+  console.log('Adding cache with key INPUT: ', id);
+  console.log('Adding cache with key PARSED: ', id);
+  // console.log('Adding cache with value OBJ: ', JSON.parse(JSON.stringify(obj)));
+  const now = Date.now();
   // client.setAsync(JSON.stringify(id), JSON.stringify(obj), 'EX', expiration)
-  client.setAsync(+id, obj)
+  client.setAsync(id, JSON.stringify(obj))
   .then(data => {
+    // console.log('Success time to add to cache ', Date.now() - now)
     console.log('CACHE Return:', data);
-    console.log('Successfully cached');
+    // console.log('Successfully cached');
   })
   .error(err => {
+    // console.log('Error time to cache ', Date.now() - now)
     console.error('Error in caching', err);
   });
 }
@@ -61,9 +82,11 @@ let obj = {
 }
 // addToCache(1, obj);
 // client.del("1");
-getFromCache(1);
+// getFromCache(1);
+getFromCache(8308722);
 
 module.exports = {
   addToCache,
-  getFromCache
+  getFromCache,
+  redisStore
 }

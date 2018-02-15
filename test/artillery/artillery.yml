@@ -5,7 +5,9 @@ config:
   
     - duration: 30
       arrivalRate: 500
-
+    # - duration: 1
+      # arrivalRate: 1
+      # arrivalRate: 1
   defaults:
     headers:
       x-my-service-auth: '987401838271002188298567'

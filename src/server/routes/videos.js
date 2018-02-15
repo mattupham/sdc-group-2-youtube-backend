@@ -100,8 +100,6 @@ router.put(`${BASE_URL}/client/update/:video_id`, async (ctx) => {
   }
 })
 
-
-
 // router.get(`${BASE_URL}/search/:video_id`, async (ctx) => {
 //   // console.log(ctx.params.video_id)
 //   try {
@@ -127,6 +125,7 @@ router.get(`${BASE_URL}/search/:video_id`, async (ctx) => {
   try {
     //check redis cache with await
     const cachedVideo = await redis.getFromCache(ctx.params.video_id);
+    // cachedVideo = null;
     console.log('ROUTE CACHED VIDEO: ', cachedVideo);
     //if cached video not null, ctx body and ctx status
     if (cachedVideo !== null){
@@ -137,7 +136,8 @@ router.get(`${BASE_URL}/search/:video_id`, async (ctx) => {
       };
     } else if (cachedVideo === null) {
       const video = await queries.getSingleVideo(ctx.params.video_id);
-      redis.addToCache(video[0].video_id, JSON.stringify(video[0]));
+      // redis.addToCache(video[0].video_id, JSON.stringify(video[0]));
+      redis.redisStore.push(video[0]);
       console.log('ROUTE POSTGRES VIDEO: ', video[0])
       if (video.length) {
         ctx.body = {
@@ -152,14 +152,6 @@ router.get(`${BASE_URL}/search/:video_id`, async (ctx) => {
         };
       }
     }
-    
-    //if video is null
-      //query from postgres
-      //place query from postgres into redis
-
-    
-    
-    
   } catch (err) {
     console.log(err)
   }
